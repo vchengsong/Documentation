@@ -13,7 +13,7 @@ BOSCore bases on EOSIO, so you can also referer EOS.IO Technical White Paper:
 - [Korean](https://github.com/EOSIO/Documentation/blob/master/ko-KR/TechnicalWhitePaper.md) translated by [@clayop](https://steemit.com/@clayop)
 
 
-### IBC docs
+### IBC Docs
 - [EOSIO IBC Priciple and Design](IBC/EOSIO_IBC_Priciples_and_Design.md)
 - [EOSIO IBC Priciple and Design 中文](IBC/EOSIO_IBC_Priciples_and_Design_zh.md)
 - [IBC User Guide](IBC/README.md)
@@ -28,7 +28,7 @@ BOSCore bases on EOSIO, so you can also referer EOS.IO Technical White Paper:
 - [FAQ](IBC/FAQ.md)
 
 
-### BOS Batch-PBFT / LIB Acceleration Solution docs
+### BOS Batch-PBFT / LIB Acceleration Solution Docs
 - [BOS LIB Acceleration Solution: Batch PBFT](LIB/BOS_Batch_PBFT_I.md)
 - [BOS Batch-PBFT Upgrade Solution](LIB/BOS_Batch_PBFT_II.md)
 
