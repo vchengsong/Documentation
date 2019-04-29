@@ -1,15 +1,15 @@
-EOSIO IBC Priciple and Design
+EOSIO IBC Priciples and Design
 ---------
 *Author:Simon [Github](https://github.com/vonhenry)*
 
-This paper introduces the technical principle of IBC, the contracts and ibc_plugin developed by boscore team.
+This paper introduces the technical principles of IBC, the contracts and ibc_plugin developed by BOSCORE team.
 
-In order to realize the inter-blockchain transfer of token between two EOSIO blockchains, first, we need to 
+In order to realize the inter-blockchain transfer of tokens between two EOSIO blockchains, first, we need to 
 solve two problems: 1. How to realize the lightweight client, 2. How to ensure the integrity and reliability 
-of inter-blockchain transactions, how to prevent double spend and replay attacks.
+of inter-blockchain transactions, how to prevent double spend attack and replay attacks.
 
-The EOS mainnet and BOS mainnet are illustrated below. However, this document applicable for
-any two EOSIO architecture blockchains.
+The EOS mainnet and BOS mainnet are illustrated below. However, this document is applicable for
+any two blockchains base on EOSIO architecture.
 
 
 ### 1. Terminology
@@ -18,53 +18,53 @@ any two EOSIO architecture blockchains.
   
 ### 2. Key concepts and data structures
 - Simple Payment Verification (SPV)  
-  Simple Payment Verification was first proposed in Bitcoin White Paper of Satoshi (https://bitcoin.org/bitcoin.pdf) 
-  to verify that a transaction exists in a blockchain.`SPV client` stores contiguous block headers, but no blocks' body,
-  so it only takes up a small amount of storage space. When receive a transaction and the `merkle path` of the transaction,
+  Simple Payment Verification was first proposed in Bitcoin White Paper by Satoshi (https://bitcoin.org/bitcoin.pdf) 
+  to verify that a transaction exists in a blockchain.`SPV client` stores contiguous block headers, but no block body,
+  so it only takes up a small amount of storage space. When receiving a transaction and the `merkle path` of the transaction,
   `SPV client` can used to verify whether this transaction exist in the blockchain or not.
 
-- Lightwight client (lwc)  
-  also called `SPV client', is a lightweight chain composed of block headers.
+- Lightwight Client (lwc)  
+  also called `SPV client` or `light client`, is a lightweight chain composed of block headers.
 
-- Merkle path  
+- Merkle Path  
   In order to verify whether a transaction exists in a blockchain, only the original data of the transaction 
   and the transaction's `merkle path` is needed, instead of the whole block. then calculate the merkle root and
-  compaire with the merkle root of block header, if equal, indicates that the transaction exists in that blockchain.
-  `merkle path` also known as `merkle branch`.
+  compaire with the merkle root of block header, if equal, it means that the transaction exists in that blockchain.
+  `merkle path` is also known as `merkle branch`.
 
 - Block Producer Schedule  
-  The `BP Schedule` is a EOSIO architecture blockchain technology, which used to determine the rights that which 
+  The `BP Schedule` is a EOSIO architecture blockchain technology, which is used to determine the rights that which 
   producer can produce blocks. The new version `BP Schedule` comes into effect after passing the validation of
   the last batch of `BP Schedule`. In order to ensure strict handover of BP rights, it is a core technology of 
-  IBC system logic, that the lightweight client must follow the corresponding `BP Schedule` with it's mainnet.
+  IBC systematic logic, that the lightweight client must follow the corresponding `BP Schedule` with its mainnet.
 
-- forkdb  
+- Forkdb  
   When the EOSIO node runs, there are two underlying DBs used to store block information. 
   One is `blog`, i.e. `block log`, which is used to store irreversible blocks, and the other is `forkdb`, 
   which is used to store reversible blocks. Forkdb stores part of the block information at the top of the 
   current blockchain. A block must be accepted by forkdb before it finally enters the irreversible block. 
-  The lightweight client mainly refers to the logic of forkdb.
+  The lightweight client mainly take reference from the logic of forkdb.
   
 ### 3. Lightweight Client
 
-In order to solve the cross-chain problem, the first problem to be solved is how to realize the lightweight client.
-1. At where should the lightweight client runs? In the contract or out of the contract, for example, in plugin layer?
-2. If running in contract, is it to synchronize all block header data of the opposite blockchain in real time, 
+The first problem met by cross-chain technology is the realization of the lightweight client.
+1. Where should the lightweight client run? In the contract or out of the contract, for example, in plugin layer?
+2. If it running in a contract, is it to synchronize all block header data of the opposite blockchain in real time, 
    or to synchronize part of block header data to verify transactions according to need, because synchronizing
    all block header data will consume a lot of CPU resources of two chains.
-3. If running in contract, how to ensure the credibility of the lightweight client, how to prevent malicious attacks, 
-   how to achieve complete decentralization, does not depend on the trust of any relay node.
+3. If it running in a contract, how to ensure the credibility of the lightweight client, how to prevent malicious attacks, 
+   how to achieve complete decentralization, no need of depending on the trust of any relay node.
 
 
-#### 3.1 Should the Lightweight Client Run in the Contract
+#### 3.1 Should the Lightweight Client Be Run in a Contract
 Bitcoin's light client was originally run on a single node (such as a personal computer or a decentralized 
-Bitcoin mobile wallet) to verify the existence of transactions and to see the depth of that block. Specific 
+Bitcoin mobile wallet) to verify the existence of transactions and to see the depth of that block. Detailed 
 implementation can be referred to [breadwallet](https://github.com/breadwallet/breadwallet-core).
 
-IBC and Decentralized Wallet have different requirements for light clients. Decentralized wallets generally run
+IBC and Decentralized Wallet have different requirements for light clients. Decentralized wallets are generally run
 on personal mobile apps, providing transaction verification services for individual users, while IBC systems need 
-light clients that are open, accessible and trustworthy to everyone. From this point of view, a light client that
-can gain public trust can only run in the contract, because only the contract data is globally consistent and 
+light clients that are open, accessible and trustworthy to everyone. From this point of view, a light client 
+can only run in the contract to gain public turst, because only the contract data is globally consistent and 
 can not be tampered with. It is impossible to implement a trusted light client outside the contract, so BOSIBC 
 run the light client in the contract. See source code of [ibc.chain](https://github.com/boscore/ibc_contracts/tree/master/ibc.chain).
 
